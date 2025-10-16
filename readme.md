@@ -32,7 +32,7 @@ mailing_agent/
 
 ### 1️⃣ Install Dependencies
 ```bash
-git clone https://github.com/YourUsername/MailingAgent.git
+git clone https://github.com/TGvenomYT/MailingAgent.git
 cd MailingAgent
 pip install -r requirements.txt
 ```
