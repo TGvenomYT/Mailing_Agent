@@ -1,16 +1,1 @@
-langchain
-langchain_ollama
-ollama
-PyQt5
-speechrecognition
-pydub
-requests
-python-dotenv
-imapclient
-langchain_text_splitters
-gtts
-playsound
-pyqt5
-pandas 
-langchain_community
-scikit-learn
+wikipedia
