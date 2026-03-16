@@ -13,10 +13,10 @@ from email.header import decode_header
 import pandas as pd
 from sklearn.feature_extraction.text import CountVectorizer
 from sklearn.linear_model import LogisticRegression
-from langchain.text_splitter import CharacterTextSplitter
-from langchain.llms.base import LLM
+from langchain_text_splitters import CharacterTextSplitter
+from langchain_core.language_models.llms import LLM
 from langchain_core.prompts import PromptTemplate  
-from langchain.chains import LLMChain               
+#from langchain.chains import LLMChain               
 from pydantic import Field
 from langchain_community.llms import Ollama  # Only this Ollama import is needed
 

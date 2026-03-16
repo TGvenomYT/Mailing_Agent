@@ -14,7 +14,7 @@ load_dotenv()
 
 # Ollama server URL
 OLLAMA_URL = os.getenv('OLLAMA_URL', 'http://localhost:11434')  # Default Ollama URL, can be set in .env
-OLLAMA_MODEL = os.getenv('OLLAMA_MODEL', 'qwen2.5-coder:0.5b')  # Default to an available model
+OLLAMA_MODEL = os.getenv('OLLAMA_MODEL', 'llama2')  # Default to an available model
 
 print(f"[DEBUG] Using Ollama URL: {OLLAMA_URL}")
 print(f"[DEBUG] Using Ollama Model: {OLLAMA_MODEL}")
