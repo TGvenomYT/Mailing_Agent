@@ -2,7 +2,7 @@ import speech_recognition as sr
 import os
 from dotenv import load_dotenv
 from gtts import gTTS
-import playsound
+import playsound3
 import requests
 import json
 
@@ -28,7 +28,7 @@ def speak(text):
         tts = gTTS(text=text, lang='en',slow=False)
         filename = "temp_speech.mp3"
         tts.save(filename)
-        playsound.playsound(filename)
+        playsound3.playsound(filename)
         os.remove(filename)  # Remove the temporary file
     except Exception as e:
         print(f"Error during speech synthesis: {e}")

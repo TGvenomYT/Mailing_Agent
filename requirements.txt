@@ -1,1 +1,13 @@
 wikipedia
+ssl
+os
+subprocess
+email
+pandas
+scikit-learn
+langchain
+pydantic
+gtts
+playsound3
+requests
+json
