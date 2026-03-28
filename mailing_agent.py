@@ -19,40 +19,57 @@ from langchain_core.prompts import PromptTemplate
 #from langchain.chains import LLMChain               
 from pydantic import Field
 from langchain_community.llms import Ollama  # Only this Ollama import is needed
-
+from typing import Optional, List, Any, Mapping
 # Load environment variables from a .env file if available
 load_dotenv()
-
+import requests  # Added for direct API calls to Ollama, which is faster on Mac than subprocess
 class OllamaLLM(LLM):
     """
-    A LangChain-compatible wrapper that calls Ollama via subprocess.
-    Fields declared as Pydantic fields so they can be set on instantiation.
+    A LangChain-compatible wrapper that calls the Ollama API directly.
+    Optimized for macOS and Python 3.14.
     """
-    model: str = Field(default="llama3.2:latest")
-    executable: str = Field(default="/snap/bin/ollama")
+    # Type hints are mandatory for Pydantic v2/Python 3.14
+    model: str = Field(default="llama2:latest")
+    base_url: str = "http://localhost:11434"
 
     @property
     def _llm_type(self) -> str:
-        return "ollama"
+        return "ollama_api"
 
-    def _call(self, prompt: str, stop: list = None) -> str:
+    @property
+    def _identifying_params(self) -> Mapping[str, Any]:
+        return {"model": self.model, "base_url": self.base_url}
+
+    def _call(self, prompt: str, stop: Optional[List[str]] = None, **kwargs: Any) -> str:
         """
-        Executes Ollama with the provided prompt.
-        The prompt is passed as a positional argument with no '--prompt' flag.
+        Sends a POST request to the local Ollama API.
         """
-        command = [self.executable, "run", self.model, prompt]
-        print("\n[DEBUG] Executing Ollama command in LLM wrapper:")
-        #print("[DEBUG] Command:", command)
+        print(f"\n[DEBUG] Sending prompt to Ollama API ({self.model})...")
+        
+        payload = {
+            "model": self.model,
+            "prompt": prompt,
+            "stream": False  # Set to False for a single block of text
+        }
+
         try:
-            result = subprocess.run(command, capture_output=True, text=True, check=True)
-            print("[DEBUG] Ollama output (LLM):", result.stdout)
-            return result.stdout.strip()
-        except subprocess.CalledProcessError as e:
-            print("[DEBUG] Error calling Ollama in LLM wrapper:")
-            print("STDOUT:", e.stdout)
-            print("STDERR:", e.stderr)
-            return "Unable to generate response."
+            # Using requests.post is much faster on Mac than subprocess.run
+            response = requests.post(
+                f"{self.base_url}/api/generate", 
+                json=payload,
+                timeout=120  # Gives the M5 chip plenty of time for large prompts
+            )
+            response.raise_for_status()
+            
+            data = response.json()
+            output = data.get("response", "").strip()
+            
+            print("[DEBUG] Ollama response received successfully.")
+            return output
 
+        except requests.exceptions.RequestException as e:
+            print(f"[DEBUG] Error connecting to Ollama API: {e}")
+            return "Unable to generate response. Is the Ollama App running?"
 
 
 
